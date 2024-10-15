@@ -3,14 +3,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from src.auth.schemas import CreateUserReq, Token, LoginUserReq
-from src.auth.service import create_user, authenticate_user, create_access_token, refresh_user_token
+from src.auth.service import create_user, authenticate_user, refresh_user_token, sign_jwt, JWTBearer
 from src.database import get_db
 
 router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
 
 
-@router.post("/auth/create-user", response_model=Token, summary="Create a new user", tags=["Auth"])
+@router.post("/auth/create-user",
+             response_model=Token,
+             summary="Create a new user",
+             tags=["Auth"])
 @limiter.limit("3/minute")
 async def create_user_route(request: Request, user: CreateUserReq, db: AsyncSession = Depends(get_db)):
     """
@@ -40,11 +43,13 @@ async def create_user_route(request: Request, user: CreateUserReq, db: AsyncSess
     Returns a bearer token upon successful user creation.
     """
     user = await create_user(user, db)
-    access_token = create_access_token(data={"sub": user.email})
-    return {"access_token": access_token, "token_type": "bearer"}
+    return sign_jwt(user.email)
 
 
-@router.post("/auth/login", response_model=Token, summary="User login", tags=["Auth"])
+@router.post("/auth/login",
+             response_model=Token,
+             summary="User login",
+             tags=["Auth"])
 @limiter.limit("5/minute")
 async def login_user(request: Request, login_user: LoginUserReq, db: AsyncSession = Depends(get_db)):
     """
@@ -74,13 +79,17 @@ async def login_user(request: Request, login_user: LoginUserReq, db: AsyncSessio
     user = await authenticate_user(login_user.email, login_user.password, db)
     if not user:
         raise HTTPException(status_code=400, detail="Invalid credentials")
-    access_token = create_access_token(data={"sub": user.email})
-    return {"access_token": access_token, "token_type": "bearer"}
+    access_token = sign_jwt(user.email)
+    return access_token
 
 
-@router.get("/auth/refresh", response_model=Token, summary="Refresh user token", tags=["Auth"])
+@router.get("/auth/refresh",
+            response_model=Token,
+            dependencies=[Depends(JWTBearer())],
+            summary="Refresh user token",
+            tags=["Auth"])
 @limiter.limit("10/minute")
-async def refresh_token(request: Request, token: str, db: AsyncSession = Depends(get_db)):
+async def refresh_token(request: Request, token: str = Depends(JWTBearer())):
     """
     Refresh the user's authentication token using the existing one.
 
@@ -102,4 +111,4 @@ async def refresh_token(request: Request, token: str, db: AsyncSession = Depends
 
     Returns a new token if the existing token is valid. If the token is invalid or expired, a `401 Unauthorized` error is returned.
     """
-    return await refresh_user_token(token, db)
+    return await refresh_user_token(token)

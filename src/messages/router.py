@@ -4,6 +4,7 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from typing import List
 
+from src.auth.service import JWTBearer
 from src.database import get_db
 from src.messages.schemas import MessageReq, MessageResponse, MessageUpdate
 from src.messages.service import create_message, get_messages, get_message, update_message, delete_message
@@ -11,7 +12,14 @@ from src.messages.service import create_message, get_messages, get_message, upda
 router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
 
-@router.post("/messages/", response_model=MessageResponse, summary="Create a new message", tags=["Messages"])
+prefix = "messages"
+
+
+@router.post(f"/{prefix}/",
+             dependencies=[Depends(JWTBearer())],
+             response_model=MessageResponse,
+             summary="Create a new message",
+             tags=["Messages"])
 @limiter.limit("30/minute")
 async def create_message_route(request: Request, message: MessageReq, db: AsyncSession = Depends(get_db)):
     """
@@ -29,7 +37,12 @@ async def create_message_route(request: Request, message: MessageReq, db: AsyncS
     """
     return await create_message(db=db, message=message)
 
-@router.get("/messages/", response_model=List[MessageResponse], summary="Retrieve all messages", tags=["Messages"])
+
+@router.get(f"/{prefix}/",
+            dependencies=[Depends(JWTBearer())],
+            response_model=List[MessageResponse],
+            summary="Retrieve all messages",
+            tags=["Messages"])
 @limiter.limit("60/minute")
 async def get_messages_route(request: Request, skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
     """
@@ -59,7 +72,12 @@ async def get_messages_route(request: Request, skip: int = 0, limit: int = 10, d
     """
     return await get_messages(db=db, skip=skip, limit=limit)
 
-@router.get("/messages/{message_id}", response_model=MessageResponse, summary="Get a message by ID", tags=["Messages"])
+
+@router.get(f"/{prefix}/{{message_id}}",
+            dependencies=[Depends(JWTBearer())],
+            response_model=MessageResponse,
+            summary="Get a message by ID",
+            tags=["Messages"])
 @limiter.limit("60/minute")
 async def get_message_route(request: Request, message_id: int, db: AsyncSession = Depends(get_db)):
     """
@@ -87,9 +105,15 @@ async def get_message_route(request: Request, message_id: int, db: AsyncSession 
         raise HTTPException(status_code=404, detail="Message not found")
     return message
 
-@router.put("/messages/{message_id}", response_model=MessageResponse, summary="Update a message by ID", tags=["Messages"])
+
+@router.put(f"/{prefix}/{{message_id}}",
+            dependencies=[Depends(JWTBearer())],
+            response_model=MessageResponse,
+            summary="Update a message by ID",
+            tags=["Messages"])
 @limiter.limit("15/minute")
-async def update_message_route(request: Request, message_id: int, message: MessageUpdate, db: AsyncSession = Depends(get_db)):
+async def update_message_route(request: Request, message_id: int, message: MessageUpdate,
+                               db: AsyncSession = Depends(get_db)):
     """
     Update an existing message by its ID.
 
@@ -111,7 +135,12 @@ async def update_message_route(request: Request, message_id: int, message: Messa
         raise HTTPException(status_code=404, detail="Message not found")
     return updated_message
 
-@router.delete("/messages/{message_id}", response_model=MessageResponse, summary="Delete a message by ID", tags=["Messages"])
+
+@router.delete(f"/{prefix}/{{message_id}}",
+               dependencies=[Depends(JWTBearer())],
+               response_model=MessageResponse,
+               summary="Delete a message by ID",
+               tags=["Messages"])
 @limiter.limit("60/minute")
 async def delete_message_route(request: Request, message_id: int, db: AsyncSession = Depends(get_db)):
     """
