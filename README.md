@@ -1,6 +1,8 @@
 # FastAPI Project with Async SQLAlchemy, Prometheus & Grafana Monitoring
 
-This project is a FastAPI application that includes PostgreSQL as the database and integrates Prometheus for monitoring and Grafana for visualizing metrics. The application uses SQLAlchemy 1.4+ with async functionality for efficient database interactions. It also includes rate-limiting, JWT-based authentication, and a full suite of unit tests.
+This project is a basic FastAPI application demonstrating the integration of PostgreSQL for database management, Prometheus for monitoring, and Grafana for visualizing metrics. It uses SQLAlchemy 1.4+ with async functionality for efficient database interactions, along with rate-limiting and JWT-based authentication. The project includes a full set of unit tests.
+
+It is designed as a starting point to showcase how these technologies work together, providing a solid foundation for others to build upon and extend the architecture to suit their own needs.
 
 ## Features
 
