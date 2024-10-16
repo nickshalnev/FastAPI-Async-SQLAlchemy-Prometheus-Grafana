@@ -1,8 +1,15 @@
 # FastAPI Project with Async SQLAlchemy, Prometheus & Grafana Monitoring
 
-This project is a basic FastAPI application demonstrating the integration of PostgreSQL for database management, Prometheus for monitoring, and Grafana for visualizing metrics. It uses SQLAlchemy 1.4+ with async functionality for efficient database interactions, along with rate-limiting and JWT-based authentication. The project includes a full set of unit tests.
+This project is a basic FastAPI application demonstrating the integration of PostgreSQL for database management,
+Prometheus for monitoring, and Grafana for visualizing metrics. It uses SQLAlchemy 1.4+ with async functionality for
+efficient database interactions, along with rate-limiting and JWT-based authentication. The project includes a full set
+of unit tests.
 
-It is designed as a starting point to showcase how these technologies work together, providing a solid foundation for others to build upon and extend the architecture to suit their own needs.
+It is designed as a starting point to showcase how these technologies work together, providing a solid foundation for
+others to build upon and extend the architecture to suit their own needs.
+
+As the author of this project, I welcome any criticism, advice, or feedback. Your insights will help me improve and
+evolve this project further. 🙂
 
 ## Features
 
@@ -62,124 +69,126 @@ After logging in, you can set up Prometheus as a data source.
 
 ### 5. API Routes
 
-The application provides several RESTful API routes for managing messages and user authentication. Here's an overview of the available routes:
+The application provides several RESTful API routes for managing messages and user authentication. Here's an overview of
+the available routes:
 
 #### **Messages API**
 
 - **POST /messages/** - Create a new message.
-  - **Request**: 
-    ```json
-    {
-      "text": "Hello World!"
-    }
-    ```
-  - **Response**:
-    ```json
-    {
-      "id": 1,
-      "text": "Hello World!"
-    }
-    ```
-
-- **GET /messages/** - Retrieve all messages.
-  - **Query Params**: `skip` (default: 0), `limit` (default: 10).
-  - **Response**:
-    ```json
-    [
+    - **Request**:
+      ```json
+      {
+        "text": "Hello World!"
+      }
+      ```
+    - **Response**:
+      ```json
       {
         "id": 1,
         "text": "Hello World!"
-      },
-      {
-        "id": 2,
-        "text": "Another message"
       }
-    ]
-    ```
+      ```
+
+- **GET /messages/** - Retrieve all messages.
+    - **Query Params**: `skip` (default: 0), `limit` (default: 10).
+    - **Response**:
+      ```json
+      [
+        {
+          "id": 1,
+          "text": "Hello World!"
+        },
+        {
+          "id": 2,
+          "text": "Another message"
+        }
+      ]
+      ```
 
 - **GET /messages/{message_id}** - Retrieve a message by ID.
-  - **Response**:
-    ```json
-    {
-      "id": 1,
-      "text": "Hello World!"
-    }
-    ```
+    - **Response**:
+      ```json
+      {
+        "id": 1,
+        "text": "Hello World!"
+      }
+      ```
 
 - **PUT /messages/{message_id}** - Update a message by ID.
-  - **Request**:
-    ```json
-    {
-      "text": "Updated message"
-    }
-    ```
+    - **Request**:
+      ```json
+      {
+        "text": "Updated message"
+      }
+      ```
 
-  - **Response**:
-    ```json
-    {
-      "id": 1,
-      "text": "Updated message"
-    }
-    ```
+    - **Response**:
+      ```json
+      {
+        "id": 1,
+        "text": "Updated message"
+      }
+      ```
 
 - **DELETE /messages/{message_id}** - Delete a message by ID.
-  - **Response**:
-    ```json
-    {
-      "id": 1,
-      "text": "Hello World!"
-    }
-    ```
+    - **Response**:
+      ```json
+      {
+        "id": 1,
+        "text": "Hello World!"
+      }
+      ```
 
 #### **Auth API**
 
 - **POST /auth/create-user** - Create a new user.
-  - **Request**:
-    ```json
-    {
-      "email": "user@example.com",
-      "name": "John Doe",
-      "password": "password123"
-    }
-    ```
-  - **Response**:
-    ```json
-    {
-      "access_token": "string",
-      "token_type": "bearer"
-    }
-    ```
+    - **Request**:
+      ```json
+      {
+        "email": "user@example.com",
+        "name": "John Doe",
+        "password": "password123"
+      }
+      ```
+    - **Response**:
+      ```json
+      {
+        "access_token": "string",
+        "token_type": "bearer"
+      }
+      ```
 
 - **POST /auth/login** - User login.
-  - **Request**:
-    ```json
-    {
-      "email": "user@example.com",
-      "password": "password123"
-    }
-    ```
-  - **Response**:
-    ```json
-    {
-      "access_token": "string",
-      "token_type": "bearer"
-    }
-    ```
+    - **Request**:
+      ```json
+      {
+        "email": "user@example.com",
+        "password": "password123"
+      }
+      ```
+    - **Response**:
+      ```json
+      {
+        "access_token": "string",
+        "token_type": "bearer"
+      }
+      ```
 
 - **GET /auth/refresh** - Refresh the user's authentication token.
-  - **Response**:
-    ```json
-    {
-      "access_token": "string",
-      "token_type": "bearer"
-    }
-    ```
+    - **Response**:
+      ```json
+      {
+        "access_token": "string",
+        "token_type": "bearer"
+      }
+      ```
 
 ### 6. Prometheus Configuration
 
 Prometheus collects metrics from the FastAPI application and exposes them on the `/metrics` endpoint.
 
-Configuration for Prometheus is in the `prometheus.yml` file. It scrapes metrics from the FastAPI application running at `web:8000`.
+Configuration for Prometheus is in the `prometheus.yml` file. It scrapes metrics from the FastAPI application running
+at `web:8000`.
 
 **prometheus.yml**:
 
@@ -190,7 +199,7 @@ global:
 scrape_configs:
   - job_name: 'fastapi_app'
     static_configs:
-      - targets: ['web:8000']  # The FastAPI app container
+      - targets: [ 'web:8000' ]  # The FastAPI app container
 ```
 
 ### 7. Grafana Setup
@@ -210,7 +219,8 @@ This project includes rate limiting using the **slowapi** package to protect the
 
 ### 9. Running Tests
 
-Unit tests are written using `pytest`, `pytest-asyncio`, and `AsyncMock`. They include full coverage of service files code.
+Unit tests are written using `pytest`, `pytest-asyncio`, and `AsyncMock`. They include full coverage of service files
+code.
 
 To run the tests, execute:
 
@@ -220,9 +230,11 @@ pytest
 
 ### 10. Metrics and Monitoring
 
-The application exposes important metrics, such as the number of requests, via the `/metrics` endpoint. These metrics are collected by Prometheus and visualized in Grafana.
+The application exposes important metrics, such as the number of requests, via the `/metrics` endpoint. These metrics
+are collected by Prometheus and visualized in Grafana.
 
 Key Metrics:
+
 - **Request Count**: Total number of requests handled by the FastAPI application.
 - **Request Duration**: Time taken to process each request.
 - **Database Queries**: Number of queries sent to the PostgreSQL database.
@@ -237,11 +249,14 @@ This project uses Docker volumes to persist data between container restarts:
 ### 12. Troubleshooting
 
 - **Grafana can't connect to Prometheus**: Ensure that the correct URL (`http://prometheus:9090`) is set in Grafana.
-- **Prometheus is not scraping metrics**: Check the configuration in `prometheus.yml` and ensure the FastAPI app is running at `http://web:8000`.
+- **Prometheus is not scraping metrics**: Check the configuration in `prometheus.yml` and ensure the FastAPI app is
+  running at `http://web:8000`.
 
 ## Conclusion
 
-This project demonstrates the integration of modern tools like Prometheus, Grafana, and SQLAlchemy to create a robust, scalable API monitoring solution. By using Docker Compose, you can quickly spin up the entire environment and begin monitoring your services in real-time.
+This project demonstrates the integration of modern tools like Prometheus, Grafana, and SQLAlchemy to create a robust,
+scalable API monitoring solution. By using Docker Compose, you can quickly spin up the entire environment and begin
+monitoring your services in real-time.
 
 Feel free to fork, modify, and extend this setup for your own needs!
 
