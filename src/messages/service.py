@@ -62,18 +62,15 @@ async def update_message(db: AsyncSession, message_id: int, message: MessageUpda
             .values(text=message.text)
             .returning(Message)
         )
-        try:
-            result = await db.execute(stmt)
-        except HTTPException:
-            logger.warning(f"Message with ID {message_id} not found for update")
-            raise message_not_found_exception
-
+        result = await db.execute(stmt)
         updated_message = result.scalars().first()
 
         await db.commit()
         logger.info(f"Message with ID {message_id} updated")
         return updated_message
-
+    except HTTPException:
+        logger.warning(f"Message with ID {message_id} not found for update")
+        raise message_not_found_exception
     except Exception as e:
         logger.error(f"Unhandled exception: {e.__class__.__name__}\nreturning 400")
         logger.error(f"Database error occurred while updating message with ID {message_id}: {str(e)}")
