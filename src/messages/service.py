@@ -45,7 +45,9 @@ async def get_message(db: AsyncSession, message_id: int):
             raise message_not_found_exception
         logger.info(f"Message with ID {message_id} retrieved")
         return message
-
+    except HTTPException:
+        logger.warning(f"Message with ID {message_id} not found for update")
+        raise message_not_found_exception
     except Exception as e:
         logger.error(f"Unhandled exception: {e.__class__.__name__}\nreturning 400")
         logger.error(f"Database error occurred while getting message with ID {message_id}: {str(e)}")
@@ -90,7 +92,9 @@ async def delete_message(db: AsyncSession, message_id: int):
         await db.commit()
         logger.info(f"Message with ID {message_id} deleted")
         return db_message
-
+    except HTTPException:
+        logger.warning(f"Message with ID {message_id} not found for update")
+        raise message_not_found_exception
     except Exception as e:
         logger.error(f"Unhandled exception: {e.__class__.__name__}\nreturning 400")
         logger.error(f"Database error occurred while deleting message with ID {message_id}: {str(e)}")
