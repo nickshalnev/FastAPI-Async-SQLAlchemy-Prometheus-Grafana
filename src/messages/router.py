@@ -100,10 +100,7 @@ async def get_message_route(request: Request, message_id: int, db: AsyncSession 
 
     If the message does not exist, a `404 Not Found` error is returned.
     """
-    message = await get_message(db=db, message_id=message_id)
-    if message is None:
-        raise HTTPException(status_code=404, detail="Message not found")
-    return message
+    return await get_message(db=db, message_id=message_id)
 
 
 @router.put(f"/{prefix}/{{message_id}}",
@@ -130,10 +127,7 @@ async def update_message_route(request: Request, message_id: int, message: Messa
 
     If the message does not exist, a `404 Not Found` error is returned.
     """
-    updated_message = await update_message(db=db, message_id=message_id, message=message)
-    if updated_message is None:
-        raise HTTPException(status_code=404, detail="Message not found")
-    return updated_message
+    return await update_message(db=db, message_id=message_id, message=message)
 
 
 @router.delete(f"/{prefix}/{{message_id}}",
@@ -155,7 +149,4 @@ async def delete_message_route(request: Request, message_id: int, db: AsyncSessi
 
     If the message does not exist, a `404 Not Found` error is returned.
     """
-    deleted_message = await delete_message(db=db, message_id=message_id)
-    if deleted_message is None:
-        raise HTTPException(status_code=404, detail="Message not found")
-    return deleted_message
+    return await delete_message(db=db, message_id=message_id)

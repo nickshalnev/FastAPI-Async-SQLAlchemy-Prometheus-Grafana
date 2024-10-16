@@ -15,7 +15,9 @@ async def init_db():
         await conn.run_sync(Base.metadata.create_all)
 
 
-app = FastAPI()
+app = FastAPI(
+    swagger_ui_parameters={"syntaxHighlight.theme": "obsidian"}
+)
 
 origins = [
     "http://localhost",

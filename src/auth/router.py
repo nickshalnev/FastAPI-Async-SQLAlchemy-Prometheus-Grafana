@@ -9,8 +9,10 @@ from src.database import get_db
 router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
 
+prefix = "auth"
 
-@router.post("/auth/create-user",
+
+@router.post(f"/{prefix}/create-user",
              response_model=Token,
              summary="Create a new user",
              tags=["Auth"])
@@ -46,7 +48,7 @@ async def create_user_route(request: Request, user: CreateUserReq, db: AsyncSess
     return sign_jwt(user.email)
 
 
-@router.post("/auth/login",
+@router.post(f"/{prefix}/login",
              response_model=Token,
              summary="User login",
              tags=["Auth"])
@@ -83,7 +85,7 @@ async def login_user(request: Request, login_user: LoginUserReq, db: AsyncSessio
     return access_token
 
 
-@router.get("/auth/refresh",
+@router.get(f"/{prefix}/refresh",
             response_model=Token,
             dependencies=[Depends(JWTBearer())],
             summary="Refresh user token",
