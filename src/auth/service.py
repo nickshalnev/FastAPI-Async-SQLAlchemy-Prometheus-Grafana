@@ -61,8 +61,7 @@ async def authenticate_user(email: str, password: str, db: AsyncSession):
     try:
         await db.commit()
     except Exception as e:
-        logger.error(e)
-        logger.error(f"Unhandled exception: {e.__class__.__name__}\nreturning 400")
+        logger.error(f"Unhandled exception: {e.__class__.__name__}\nDetials: {e}\nreturning 400")
         raise unhandled_exception
     logger.debug("User authenticated")
     return user
