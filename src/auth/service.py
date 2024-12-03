@@ -42,8 +42,7 @@ async def create_user(user: CreateUserReq, db: AsyncSession):
         logger.error(f"User {user.email} already exist\nReturning 409")
         raise user_already_exist_exception
     except Exception as e:
-        logger.error(e)
-        logger.error(f"Unhandled exception: {e.__class__.__name__}\nreturning 400")
+        logger.error(f"Unhandled exception: {e.__class__.__name__}\nDetials: {e}\nreturning 400")
         raise unhandled_exception
     await db.refresh(db_user)
     logger.debug("User created")
