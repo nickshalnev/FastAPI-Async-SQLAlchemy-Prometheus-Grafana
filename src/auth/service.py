@@ -42,7 +42,7 @@ async def create_user(user: CreateUserReq, db: AsyncSession):
         logger.error(f"User {user.email} already exist\nReturning 409")
         raise user_already_exist_exception
     except Exception as e:
-        logger.error(f"Unhandled exception: {e.__class__.__name__}\nDetials: {e}\nreturning 400")
+        logger.error(f"Unhandled exception: {e.__class__.__name__}\nDetials: {e}\nReturning 400")
         raise unhandled_exception
     await db.refresh(db_user)
     logger.debug("User created")
@@ -60,7 +60,7 @@ async def authenticate_user(email: str, password: str, db: AsyncSession):
     try:
         await db.commit()
     except Exception as e:
-        logger.error(f"Unhandled exception: {e.__class__.__name__}\nDetials: {e}\nreturning 400")
+        logger.error(f"Unhandled exception: {e.__class__.__name__}\nDetials: {e}\nReturning 400")
         raise unhandled_exception
     logger.debug("User authenticated")
     return user
